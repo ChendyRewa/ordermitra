@@ -1,0 +1,29 @@
+import { render, screen } from "@testing-library/react";
+import { useChat } from "@ai-sdk/react";
+import { OrderMitraPanel } from "./ordermitra-panel";
+
+jest.mock("@ai-sdk/react", () => ({
+  useChat: jest.fn(),
+}));
+
+test("renders a fixed assistant message from useChat", () => {
+  // Arrange
+  (useChat as jest.Mock).mockReturnValue({
+    messages: [
+      { id: "1", role: "assistant", content: "Your order has shipped." },
+    ],
+    input: "",
+    handleInputChange: jest.fn(),
+    handleSubmit: jest.fn(),
+    status: "ready",
+    stop: jest.fn(),
+    reload: jest.fn(),
+    error: undefined,
+  });
+
+  // Act
+  render(<OrderMitraPanel />);
+
+  // Assert
+  expect(screen.getByText("Your order has shipped.")).toBeInTheDocument();
+});
